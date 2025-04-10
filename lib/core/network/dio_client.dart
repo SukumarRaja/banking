@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 Dio setupDio() {
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: "https://localhost:8000/api",
       connectTimeout: Duration(seconds: 5),
       receiveTimeout: Duration(seconds: 5),
     ),
@@ -12,13 +11,18 @@ Dio setupDio() {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        options.headers['Authorization'] = 'Bearer TOKEN';
+        options.headers['Content-Type'] = 'application/json';
+        // options.headers['Authorization'] = 'Bearer TOKEN';
         return handler.next(options);
       },
 
       onError: (error, handler) {
         print("Error occurred: ${error.response?.data}");
         return handler.next(error);
+      },
+      onResponse: (response, handler) {
+        print("Response Data: ${response.data}");
+        return handler.next(response);
       },
     ),
   );
